@@ -107,7 +107,7 @@ def play_game():
     prompt(level, phrase, chance) # print prompt messages
 
     while hits<len(answers) and chance>0: 
-        attempt=raw_input("\nFill in the ___"+str(hits+1)+"___\n").lower()
+        attempt=raw_input("\nFill in the ___"+str(hits+1)+"___").lower()
         if attempt in answers: 
         # if player's answer correct, goes here
             phrase=phrase.replace("___"+str(hits+1)+"___", attempt)
