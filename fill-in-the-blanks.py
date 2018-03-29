@@ -121,7 +121,7 @@ def play_game():
             else:
                 return game_over()
 
-    print "\nYou Win!!"
+    print "\nYou Win!"
 
 
 play_game()
