@@ -1,6 +1,6 @@
 data = {
     "easy": {
-    "phrase": "A ___1___ definition is an executable statement. Its"
+    "phrase": "A ___1___ definition is an executable statement. Its "
     "execution binds the ___1___ name in the current local "
     "namespace to a ___1___ ___2___ (a ___3___ around the "
     "executable code for the ___1___). This ___1___ ___2___ "
@@ -33,7 +33,7 @@ data = {
 }
 
 
-def select_level ():
+def select_level():
     """Ask user to choose difficulty level.
 
     Set up while loop, use raw_input to ask user enter level
@@ -44,19 +44,23 @@ def select_level ():
         none
 
     Return: 
-        easy, medium, or hard in string
-
+        levels: choosen by user
+        output2-4: elements from data dictionary
+        
     """
     while True:
-        level = raw_input("Please choose difficulty level by "
+        levels = raw_input("Please choose difficulty level by "
         "typing it in: easy, medium, or hard.").lower() 
-        if level in data:
-            return level
+        if levels in data:
+            return (levels,
+                    data[levels]["phrase"],
+                    data[levels]["answers"],
+                    data[levels]["failures"])
         else:
             print "Sorry, your input is not valid! Try again!"
 
 
-def prompt (level, selected_phrase, chance):
+def prompt(selected_level, selected_phrase, chance):
     """Send prompt message at the beginning of the game.
 
     Args:
@@ -67,51 +71,57 @@ def prompt (level, selected_phrase, chance):
     Return:
         None (only print promt message)
     """
-    print "You selected " + level + "." + \
-    "\nYou will get " + str(chance) + " guess(es) per blank" + \
-    "\nThe current paragraph reads as such:" + \
-    "\n" + selected_phrase
+    print "You selected "+selected_level+"."
+    print "You will get "+str(chance)+" chance(s)"
+    print "The current paragraph reads as such:"
+    print selected_phrase
+    
+
+def print_message(current_phrase):
+    """function takes phrase as argument, and print it out"""
+    print "\nCorrect!!"
+    print "\nThe current paragraph reads as such:"
+    print current_phrase
 
 
-def play_game(level):
+def game_over():
+    """this function only print out Game Over!"""
+    print "\nGame Over!"
+
+
+def play_game():
     """This function is the main engine. All logic of the game is
-    process by this function. This function defines three variables, 
+    process by this function. This function defines 4 variables, 
     and manipulates phrase and chance until the blanks are filled or 
     player fails in their attempts.
 
-    Args: the level choosen by player
+    Args:
+        None
 
-    Return: none (only print out some message)
+    Return: 
+        none (only print out some message)
 
     """
-    answers = data[level]["answers"] # from data dictionary
-    phrase = data[level]["phrase"] # from data dictionary
-    chance = data[level]["failures"] # from data dictionary
-    hits = 0 # this is the index of answers
+    level,phrase,answers,chance=select_level()
+    hits=0 # record how many blanks space
     prompt(level, phrase, chance) # print prompt messages
-    while hits < len(answers) and chance > 0: 
-        attempt_answer = raw_input('\nFill in the __' + \
-        str(hits + 1) + '__\n').lower() # ask player enter answer
-        if attempt_answer == answers[hits]: # if user's answer is right goes to here
-            if hits != (len(answers)-1): # if is not the last answer, print message
-                phrase = phrase.replace("___"+str(hits+1)+"___", \
-                answers[hits]) # replace element for print out later
-                print "\nCorrect!" + \
-                "\nThe current paragraph reads as such:" + \
-                "\n" + phrase
-                chance = data[level]["failures"] # chance has to be reseted when testing a new element
-                hits += 1
-            else: # if is last answer, return winning message and break the loop
-                print "\nYou Win!!"
-                break
-        else: # if user's answer is wrong goes to here, 
-            chance -= 1 # user will lost one chance
-            if chance > 0: # if user still have chance, loop continue
-                print "\nIncorrect! Please try again! " + \
-                str(chance) + " chance left!"
-            else: # if user ran out of chance, game over
-                print "\nGame Over!"
-                break
-    
 
-play_game(select_level())
+    while hits<len(answers) and chance>0: 
+        attempt=raw_input("\nFill in the ___"+str(hits+1)+"___\n").lower()
+        if attempt in answers: 
+        # if player's answer correct, goes here
+            phrase=phrase.replace("___"+str(hits+1)+"___", attempt)
+            hits += 1 # player hit the right answer, blank space number increment by 1
+            print_message(phrase) # use helper function to print message
+        else:
+        # if player's answer incorrect, goes here, if is the last chance, game over
+            if chance>1: 
+                chance -= 1
+                print "\nIncorrect! "+str(chance)+" chance(s) left."
+            else:
+                return game_over()
+
+    print "\nYou Win!!"
+
+
+play_game()
